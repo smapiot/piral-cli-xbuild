@@ -6,7 +6,7 @@ This plugin enables using npm scripts for building and debugging Piral instances
 
 ## Installation
 
-Use your favorite NPM client for the installation:
+Use your favorite npm client for the installation:
 
 ```sh
 npm i piral-cli-xbuild --save-dev
