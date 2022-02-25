@@ -6,7 +6,7 @@ This plugin enables using npm scripts for building and debugging Piral instances
 
 ## Installation
 
-Use your favorite npm client for the installation:
+Use your favorite package manager for the installation (e.g., `npm`):
 
 ```sh
 npm i piral-cli-xbuild --save-dev
@@ -18,7 +18,149 @@ npm i piral-cli-xbuild --save-dev
 
 Standard commands such as `piral build` or `pilet debug` will now work against shell scripts defined via special sections in the *package.json*.
 
-(tbd)
+Environment variables available for all commands:
+
+| Name                               | Description                                                       |
+| ---------------------------------- | ----------------------------------------------------------------- |
+| `PIRAL_ROOT`                       | The root directory where the package.json of the project is.      |
+| `PIRAL_LOG_LEVEL`                  | The log level (1-5) set for the piral-cli.                        |
+| `PIRAL_TARGET`                     | The directory where the source files of the project are.          |
+
+### `piral build`
+
+Used section in *package.json*: `piral:build`
+
+Example:
+
+```json
+{
+  "name": "my-piral-instance",
+  //...
+  "scripts": {
+    "build": "piral build"
+  },
+  "piral:build": {
+    "command": "create-react-app",
+    "outputDir": "lib"
+  }
+}
+```
+
+Environment variables:
+
+| Name                               | Description                                                       |
+| ---------------------------------- | ----------------------------------------------------------------- |
+| `PIRAL_PUBLIC_URL`                 | The public path of the application.                               |
+| `PIRAL_EMULATOR`                   | If the current build is for an emulator package.                  |
+| `PIRAL_CONTENT_HASH`               | If a hash should be placed in the file name (`true` or `false`).  |
+| `PIRAL_SOURCE_MAPS`                | Indicates of source maps should be used (`true` or `false`).      |
+| `PIRAL_MINIFY`                     | Indicates of the code should be minifed (`true` or `false`).      |
+| `PIRAL_ENTRY_FILE`                 | The path of the entry file.                                       |
+| `PIRAL_EXTERNALS`                  | The comma separated packages that are shared.                     |
+
+### `piral debug`
+
+Used section in *package.json*: `piral:debug`
+
+Example:
+
+```json
+{
+  "name": "my-piral-instance",
+  //...
+  "scripts": {
+    "start": "piral debug"
+  },
+  "piral:debug": {
+    "command": "create-react-app",
+    "outputDir": "lib"
+  }
+}
+```
+
+Environment variables:
+
+| Name                               | Description                                                       |
+| ---------------------------------- | ----------------------------------------------------------------- |
+| `PIRAL_PUBLIC_URL`                 | The public path of the application.                               |
+| `PIRAL_EMULATOR`                   | If the current build is for an emulator package.                  |
+| `PIRAL_CONTENT_HASH`               | If a hash should be placed in the file name (`true` or `false`).  |
+| `PIRAL_SOURCE_MAPS`                | Indicates of source maps should be used (`true` or `false`).      |
+| `PIRAL_MINIFY`                     | Indicates of the code should be minifed (`true` or `false`).      |
+| `PIRAL_ENTRY_FILE`                 | The path of the entry file.                                       |
+| `PIRAL_EXTERNALS`                  | The comma separated packages that are shared.                     |
+
+### `pilet build`
+
+Used section in *package.json*: `pilet:build`
+
+Example:
+
+```json
+{
+  "name": "my-pilet",
+  //...
+  "scripts": {
+    "build": "pilet build"
+  },
+  "pilet:build": {
+    "command": "create-react-app",
+    "outputDir": "lib",
+    "mainFile": "index.js"
+  }
+}
+```
+
+Environment variables:
+
+| Name                               | Description                                                       |
+| ---------------------------------- | ----------------------------------------------------------------- |
+| `PILET_NAME`                       | The name of the pilet package.                                    |
+| `PILET_REQUIRE_REF`                | Contains the require reference for the `window`.                  |
+| `PILET_CONTENT_HASH`               | If a hash should be placed in the file name (`true` or `false`).  |
+| `PILET_SOURCE_MAPS`                | Indicates of source maps should be used (`true` or `false`).      |
+| `PILET_MINIFY`                     | Indicates of the code should be minifed (`true` or `false`).      |
+| `PILET_ENTRY_MODULE`               | The path of the entry module.                                     |
+| `PILET_EXTERNALS`                  | The comma separated external packages.                            |
+| `PILET_IMPORTMAP`                  | The JSON string with the importmap.                               |
+| `PILET_SCHEMA`                     | The version of used schema, e.g., `v2`.                           |
+| `PILET_PIRAL_INSTANCE`             | The name of the used piral instance.                              |
+
+### `pilet debug`
+
+Used section in *package.json*: `pilet:debug`
+
+Example:
+
+```json
+{
+  "name": "my-pilet",
+  //...
+  "scripts": {
+    "start": "pilet debug"
+  },
+  "pilet:debug": {
+    "command": "create-react-app",
+    "outputDir": "lib",
+    "mainFile": "index.js"
+  }
+}
+```
+
+Environment variables:
+
+| Name                               | Description                                                       |
+| ---------------------------------- | ----------------------------------------------------------------- |
+| `PILET_NAME`                       | The name of the pilet package.                                    |
+| `PILET_REQUIRE_REF`                | Contains the require reference for the `window`.                  |
+| `PILET_CONTENT_HASH`               | If a hash should be placed in the file name (`true` or `false`).  |
+| `PILET_SOURCE_MAPS`                | Indicates of source maps should be used (`true` or `false`).      |
+| `PILET_MINIFY`                     | Indicates of the code should be minifed (`true` or `false`).      |
+| `PILET_ENTRY_MODULE`               | The path of the entry module.                                     |
+| `PILET_EXTERNALS`                  | The comma separated external packages.                            |
+| `PILET_IMPORTMAP`                  | The JSON string with the importmap.                               |
+| `PILET_SCHEMA`                     | The version of used schema, e.g., `v2`.                           |
+| `PILET_PIRAL_INSTANCE`             | The name of the used piral instance.                              |
 
 ## License
 

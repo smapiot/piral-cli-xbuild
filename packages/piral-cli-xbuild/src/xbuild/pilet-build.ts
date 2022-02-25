@@ -1,8 +1,9 @@
 import type { BundleResult, PiletBuildHandler } from 'piral-cli';
-import { checkExists, runScript } from 'piral-cli/utils';
+import { checkExists } from 'piral-cli/utils';
 import { resolve } from 'path';
 import { EventEmitter } from 'events';
-import { getConfig } from '../helpers';
+import { transformToV2 } from '../pilet-v2';
+import { copyAll, getConfig, moveFile, setSharedEnvironment, run } from '../helpers';
 
 interface ToolConfig {
   command: string;
@@ -55,12 +56,15 @@ const handler: PiletBuildHandler = {
     } = options;
 
     const eventEmitter = new EventEmitter();
+    const name = process.env.BUILD_PCKG_NAME;
+    const shortName = name.replace(/\W/gi, '');
+    const requireRef = `xChunkpr_${shortName}`;
     const config = await getConfig(root, 'pilet:build', validateConfig);
 
-    process.env.PIRAL_ROOT = root;
-    process.env.PIRAL_LOG_LEVEL = logLevel.toString();
-    process.env.PIRAL_TARGET = targetDir;
+    setSharedEnvironment(root, logLevel, targetDir);
 
+    process.env.PILET_NAME = name;
+    process.env.PILET_REQUIRE_REF = requireRef;
     process.env.PILET_CONTENT_HASH = contentHash.toString();
     process.env.PILET_SOURCE_MAPS = sourceMaps.toString();
     process.env.PILET_MINIFY = minify.toString();
@@ -74,7 +78,7 @@ const handler: PiletBuildHandler = {
       async bundle() {
         eventEmitter.emit('start', {});
 
-        await runScript(config.command, root);
+        await run(config.command, root);
 
         const output = resolve(root, config.outputDir);
         const mainFile = resolve(output, config.mainFile);
@@ -87,11 +91,18 @@ const handler: PiletBuildHandler = {
           );
         }
 
-        if (!config.skipTransform) {
-          //TODO transform to schema
-        }
+        await copyAll(output, outDir);
+        await moveFile(outDir, mainFile, outFile);
 
-        //TODO copy files to target
+        if (!config.skipTransform) {
+          await transformToV2({
+            importmap,
+            name,
+            outDir,
+            outFile,
+            requireRef,
+          });
+        }
 
         const result = {
           outDir,
