@@ -11,6 +11,16 @@ export function moveFile(dir: string, sourceFile: string, targetFile: string) {
   return Promise.resolve();
 }
 
+export function copyFile(dir: string, sourceFile: string, targetFile: string) {
+  if (sourceFile !== targetFile) {
+    const source = resolve(dir, sourceFile);
+    const target = resolve(dir, targetFile);
+    return fsPromises.copyFile(source, target);
+  }
+
+  return Promise.resolve();
+}
+
 export async function getFiles(path: string) {
   const files = await fsPromises.readdir(path);
   return files.map((file) => resolve(path, file));
@@ -27,6 +37,8 @@ export function writeText(path: string, content: string) {
 
 export async function copyAll(sourceFolder: string, targetFolder: string) {
   const sourceFiles = await fsPromises.readdir(sourceFolder);
+
+  await fsPromises.mkdir(targetFolder, { recursive: true });
 
   await Promise.all(
     sourceFiles.map(async (name) => {

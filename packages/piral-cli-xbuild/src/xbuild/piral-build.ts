@@ -2,7 +2,7 @@ import type { BundleResult, PiralBuildHandler } from 'piral-cli';
 import { checkExists } from 'piral-cli/utils';
 import { resolve } from 'path';
 import { EventEmitter } from 'events';
-import { copyAll, getConfig, moveFile, run, setSharedEnvironment } from '../helpers';
+import { copyAll, getConfig, copyFile, run, setSharedEnvironment } from '../helpers';
 
 interface ToolConfig {
   command: string;
@@ -77,7 +77,7 @@ const handler: PiralBuildHandler = {
         }
 
         await copyAll(output, outDir);
-        await moveFile(outDir, mainFile, outFile);
+        await copyFile(outDir, mainFile, outFile);
 
         const result = {
           outDir,

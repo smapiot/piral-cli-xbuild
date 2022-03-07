@@ -3,7 +3,7 @@ import { checkExists } from 'piral-cli/utils';
 import { resolve } from 'path';
 import { EventEmitter } from 'events';
 import { transformToV2 } from '../pilet-v2';
-import { copyAll, getConfig, moveFile, runAsync, setSharedEnvironment } from '../helpers';
+import { copyAll, getConfig, copyFile, runAsync, setSharedEnvironment } from '../helpers';
 
 type ToolConfig = BaseToolConfig & (WatchToolConfig | UrlToolConfig);
 
@@ -117,7 +117,7 @@ const handler: PiletBuildHandler = {
           }
 
           await copyAll(output, outDir);
-          await moveFile(outDir, mainFile, outFile);
+          await copyFile(outDir, mainFile, outFile);
 
           if (!config.skipTransform) {
             await transformToV2({
@@ -130,8 +130,10 @@ const handler: PiletBuildHandler = {
           }
 
           const result = {
+            name,
             outDir,
             outFile,
+            requireRef,
           };
 
           eventEmitter.emit('end', result);
