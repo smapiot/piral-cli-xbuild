@@ -2,7 +2,7 @@ import type { BundleResult, PiralBuildHandler } from 'piral-cli';
 import { checkExists } from 'piral-cli/utils';
 import { resolve } from 'path';
 import { EventEmitter } from 'events';
-import { copyAll, getConfig, copyFile, run, setSharedEnvironment } from '../helpers';
+import { copyAll, getConfig, copyFile, run, setSharedEnvironment, assertRequiredType } from '../helpers';
 
 interface ToolConfig {
   command: string;
@@ -11,17 +11,9 @@ interface ToolConfig {
 }
 
 function validateConfig(config: any): ToolConfig {
-  if (typeof config.command !== 'string') {
-    throw new Error('The "command" property needs to be a string.');
-  }
-
-  if (typeof config.outputDir !== 'string') {
-    throw new Error('The required "outputDir" property needs to be a string.');
-  }
-
-  if (typeof config.mainFile !== 'string') {
-    throw new Error('The required "mainFile" property needs to be a string.');
-  }
+  assertRequiredType(config, 'command', 'string');
+  assertRequiredType(config, 'outputDir', 'string');
+  assertRequiredType(config, 'mainFile', 'string');
 
   return {
     command: config.command,

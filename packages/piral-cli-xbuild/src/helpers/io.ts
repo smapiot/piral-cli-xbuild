@@ -1,4 +1,4 @@
-import { promises as fsPromises } from 'fs';
+import { promises as fsPromises, watch } from 'fs';
 import { relative, resolve } from 'path';
 
 export function moveFile(dir: string, sourceFile: string, targetFile: string) {
@@ -60,4 +60,13 @@ export async function copyAll(sourceFolder: string, targetFolder: string) {
       }
     }),
   );
+}
+
+export interface WatchDisposer {
+  (): void;
+}
+
+export function watchDir(sourceFolder: string, cb: () => void): WatchDisposer {
+  const w = watch(sourceFolder, { recursive: true }, cb);
+  return () => w.close();
 }

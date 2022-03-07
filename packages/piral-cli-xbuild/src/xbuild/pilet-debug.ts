@@ -3,12 +3,22 @@ import { checkExists } from 'piral-cli/utils';
 import { resolve } from 'path';
 import { EventEmitter } from 'events';
 import { transformToV2 } from '../pilet-v2';
-import { copyAll, getConfig, copyFile, runAsync, setSharedEnvironment } from '../helpers';
+import {
+  copyAll,
+  getConfig,
+  copyFile,
+  runAsync,
+  setSharedEnvironment,
+  watchDir,
+  assertRequiredType,
+  assertOptionalType,
+} from '../helpers';
 
 type ToolConfig = BaseToolConfig & (WatchToolConfig | UrlToolConfig);
 
 interface BaseToolConfig {
   command: string;
+  watchLine: string;
 }
 
 interface UrlToolConfig {
@@ -19,43 +29,34 @@ interface UrlToolConfig {
 interface WatchToolConfig {
   outputDir: string;
   mainFile: string;
-  type: 'watch';
   skipTransform: boolean;
+  type: 'watch';
 }
 
 function validateConfig(config: any): ToolConfig {
-  if (typeof config.command !== 'string') {
-    throw new Error('The required "command" property needs to be a string.');
-  }
+  assertRequiredType(config, 'command', 'string');
+  assertOptionalType(config, 'watchLine', 'string');
 
   if (typeof config.url !== 'undefined') {
-    if (typeof config.url !== 'string') {
-      throw new Error('The required "url" property needs to be a string.');
-    }
+    assertRequiredType(config, 'url', 'string');
 
     return {
       command: config.command,
       url: config.url,
+      watchLine: config.watchLine || '',
       type: 'url',
     };
   } else {
-    if (typeof config.outputDir !== 'string') {
-      throw new Error('The required "outputDir" property needs to be a string.');
-    }
-
-    if (typeof config.mainFile !== 'string') {
-      throw new Error('The required "mainFile" property needs to be a string.');
-    }
-
-    if (config.skipTransform !== undefined && typeof config.skipTransform !== 'boolean') {
-      throw new Error('The optional "skipTransform" property needs to be a boolean.');
-    }
+    assertRequiredType(config, 'outputDir', 'string');
+    assertRequiredType(config, 'mainFile', 'string');
+    assertOptionalType(config, 'skipTransform', 'boolean');
 
     return {
       command: config.command,
       mainFile: config.mainFile,
       outputDir: config.outputDir,
       skipTransform: config.skipTransform || false,
+      watchLine: config.watchLine || '',
       type: 'watch',
     };
   }
@@ -104,11 +105,38 @@ const handler: PiletBuildHandler = {
 
         const proc = runAsync(config.command, root);
 
+        if (config.watchLine) {
+          await proc.waitUntil(config.watchLine);
+        }
+
         if (config.type === 'watch') {
           const output = resolve(root, config.outputDir);
           const mainFile = resolve(output, config.mainFile);
-
           const exists = await checkExists(mainFile);
+
+          const result = {
+            name: outFile,
+            outDir,
+            outFile: `/${outFile}`,
+            requireRef,
+          };
+
+          const makeBundle = async () => {
+            await copyAll(output, outDir);
+            await copyFile(outDir, mainFile, outFile);
+
+            if (!config.skipTransform) {
+              await transformToV2({
+                importmap,
+                name,
+                outDir,
+                outFile,
+                requireRef,
+              });
+            }
+
+            eventEmitter.emit('end', result);
+          };
 
           if (!exists) {
             throw new Error(
@@ -116,28 +144,12 @@ const handler: PiletBuildHandler = {
             );
           }
 
-          await copyAll(output, outDir);
-          await copyFile(outDir, mainFile, outFile);
+          watchDir(output, () => {
+            eventEmitter.emit('start', {});
+            makeBundle();
+          });
 
-          if (!config.skipTransform) {
-            await transformToV2({
-              importmap,
-              name,
-              outDir,
-              outFile,
-              requireRef,
-            });
-          }
-
-          const result = {
-            name,
-            outDir,
-            outFile,
-            requireRef,
-          };
-
-          eventEmitter.emit('end', result);
-
+          await makeBundle();
           return result;
         } else {
           const url = config.url;
@@ -146,7 +158,7 @@ const handler: PiletBuildHandler = {
 
           const result = {
             url,
-          }
+          };
 
           eventEmitter.emit('end', {
             url,

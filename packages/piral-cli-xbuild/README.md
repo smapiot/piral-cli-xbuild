@@ -46,6 +46,14 @@ Example:
 }
 ```
 
+Options for running:
+
+| Name                               | Description                                                       |
+| ---------------------------------- | ----------------------------------------------------------------- |
+| `command` (required)               | The command to run to building the Piral instance.                |
+| `outputDir` (required)             | The directory where the generated files can be found.             |
+| `mainFile` (required)              | The name of the created HTML file (usually *index.html*).         |
+
 Environment variables:
 
 | Name                               | Description                                                       |
@@ -77,6 +85,15 @@ Example:
   }
 }
 ```
+
+Options for running:
+
+| Name                               | Description                                                       |
+| ---------------------------------- | ----------------------------------------------------------------- |
+| `command` (required)               | The command to run to building the Piral instance.                |
+| `outputDir` (required)             | The directory where the generated files can be found.             |
+| `mainFile` (required)              | The name of the created HTML file (usually *index.html*).         |
+| `watchLine` (optional)             | If set waits for a certain text to be seen in the command output. |
 
 Environment variables:
 
@@ -110,6 +127,17 @@ Example:
   }
 }
 ```
+
+Options for running:
+
+| Name                               | Description                                                       |
+| ---------------------------------- | ----------------------------------------------------------------- |
+| `command` (required)               | The command to run to building the pilet.                         |
+| `outputDir` (required)             | The directory where the generated files can be found.             |
+| `mainFile` (required)              | The name of the created JS file (usually *index.js*).             |
+| `skipTransform` (optional)         | If set to `true` assumes that the provided command makes a pilet. |
+
+Making a pilet implies that the pilet is fully valid, e.g., has the format as specified via the `--schema` command line flag. By default, the `pilet build` command will transform the output into a valid pilet.
 
 Environment variables:
 
@@ -146,6 +174,18 @@ Example:
   }
 }
 ```
+
+Options for running:
+
+| Name                               | Description                                                       |
+| ---------------------------------- | ----------------------------------------------------------------- |
+| `command` (required)               | The command to run to building the pilet.                         |
+| `outputDir` (required)             | The directory where the generated files can be found.             |
+| `mainFile` (required)              | The name of the created JS file (usually *index.js*).             |
+| `watchLine` (optional)             | If set waits for a certain text to be seen in the command output. |
+| `skipTransform` (optional)         | If set to `true` assumes that the provided command makes a pilet. |
+
+Making a pilet implies that the pilet is fully valid, e.g., has the format as specified via the `--schema` command line flag. By default, the `pilet build` command will transform the output into a valid pilet.
 
 Environment variables:
 

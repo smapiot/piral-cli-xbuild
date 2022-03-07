@@ -3,7 +3,7 @@ import { checkExists } from 'piral-cli/utils';
 import { resolve } from 'path';
 import { EventEmitter } from 'events';
 import { transformToV2 } from '../pilet-v2';
-import { copyAll, getConfig, copyFile, setSharedEnvironment, run } from '../helpers';
+import { copyAll, getConfig, copyFile, setSharedEnvironment, run, assertRequiredType, assertOptionalType } from '../helpers';
 
 interface ToolConfig {
   command: string;
@@ -13,21 +13,10 @@ interface ToolConfig {
 }
 
 function validateConfig(config: any): ToolConfig {
-  if (typeof config.command !== 'string') {
-    throw new Error('The required "command" property needs to be a string.');
-  }
-
-  if (typeof config.outputDir !== 'string') {
-    throw new Error('The required "outputDir" property needs to be a string.');
-  }
-
-  if (typeof config.mainFile !== 'string') {
-    throw new Error('The required "mainFile" property needs to be a string.');
-  }
-
-  if (config.skipTransform !== undefined && typeof config.skipTransform !== 'boolean') {
-    throw new Error('The optional "skipTransform" property needs to be a boolean.');
-  }
+  assertRequiredType(config, 'command', 'string');
+  assertRequiredType(config, 'outputDir', 'string');
+  assertRequiredType(config, 'mainFile', 'string');
+  assertOptionalType(config, 'skipTransform', 'boolean');
 
   return {
     command: config.command,

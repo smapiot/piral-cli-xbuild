@@ -2,12 +2,21 @@ import type { BundleResult, PiralBuildHandler } from 'piral-cli';
 import { checkExists } from 'piral-cli/utils';
 import { resolve } from 'path';
 import { EventEmitter } from 'events';
-import { copyAll, getConfig, copyFile, runAsync, setSharedEnvironment } from '../helpers';
+import {
+  copyAll,
+  getConfig,
+  copyFile,
+  runAsync,
+  setSharedEnvironment,
+  assertRequiredType,
+  assertOptionalType,
+} from '../helpers';
 
 type ToolConfig = BaseToolConfig & (WatchToolConfig | UrlToolConfig);
 
 interface BaseToolConfig {
   command: string;
+  watchLine: string;
 }
 
 interface UrlToolConfig {
@@ -22,33 +31,27 @@ interface WatchToolConfig {
 }
 
 function validateConfig(config: any): ToolConfig {
-  if (typeof config.command !== 'string') {
-    throw new Error('The required "command" property needs to be a string.');
-  }
+  assertRequiredType(config, 'command', 'string');
+  assertOptionalType(config, 'watchLine', 'string');
 
   if (typeof config.url !== 'undefined') {
-    if (typeof config.url !== 'string') {
-      throw new Error('The required "url" property needs to be a string.');
-    }
+    assertRequiredType(config, 'url', 'string');
 
     return {
       command: config.command,
       url: config.url,
+      watchLine: config.watchLine || '',
       type: 'url',
     };
   } else {
-    if (typeof config.outputDir !== 'string') {
-      throw new Error('The required "outputDir" property needs to be a string.');
-    }
-
-    if (typeof config.mainFile !== 'string') {
-      throw new Error('The required "mainFile" property needs to be a string.');
-    }
+    assertRequiredType(config, 'outputDir', 'string');
+    assertRequiredType(config, 'mainFile', 'string');
 
     return {
       command: config.command,
       mainFile: config.mainFile,
       outputDir: config.outputDir,
+      watchLine: config.watchLine || '',
       type: 'watch',
     };
   }
@@ -89,10 +92,13 @@ const handler: PiralBuildHandler = {
 
         const proc = runAsync(config.command, root);
 
+        if (config.watchLine) {
+          await proc.waitUntil(config.watchLine);
+        }
+
         if (config.type === 'watch') {
           const output = resolve(root, config.outputDir);
           const mainFile = resolve(output, config.mainFile);
-
           const exists = await checkExists(mainFile);
 
           if (!exists) {
