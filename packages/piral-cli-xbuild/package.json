@@ -47,6 +47,7 @@
   "dependencies": {
     "@babel/cli": "^7.15.7",
     "@babel/core": "^7.15.8",
-    "@babel/preset-env": "^7.15.8"
+    "@babel/preset-env": "^7.15.8",
+    "chalk": "^3.0.0"
   }
 }

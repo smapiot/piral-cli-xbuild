@@ -1,6 +1,12 @@
 import { promises as fsPromises, watch } from 'fs';
 import { relative, resolve } from 'path';
 
+const watcherDelayInMilliseconds = 200; // delay in milliseconds for debounce
+
+export interface WatchDisposer {
+  (): void;
+}
+
 export function moveFile(dir: string, sourceFile: string, targetFile: string) {
   if (sourceFile !== targetFile) {
     const source = resolve(dir, sourceFile);
@@ -62,11 +68,14 @@ export async function copyAll(sourceFolder: string, targetFolder: string) {
   );
 }
 
-export interface WatchDisposer {
-  (): void;
-}
-
 export function watchDir(sourceFolder: string, cb: () => void): WatchDisposer {
-  const w = watch(sourceFolder, { recursive: true }, cb);
-  return () => w.close();
+  const ref = { timeout: undefined };
+  const w = watch(sourceFolder, { recursive: true }, () => {
+    clearTimeout(ref.timeout);
+    ref.timeout = setTimeout(cb, watcherDelayInMilliseconds);
+  });
+  return () => {
+    clearTimeout(ref.timeout);
+    w.close();
+  };
 }
