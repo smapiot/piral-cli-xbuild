@@ -2,4 +2,4 @@
 
 ## 0.15.0 (tbd)
 
-- Moved package to dedicated repository
+- Initial release

@@ -1,6 +1,5 @@
 import type { SharedDependency } from 'piral-cli';
 import type { PluginObj } from '@babel/core';
-import type { Statement } from '@babel/types';
 import template from '@babel/template';
 
 export interface PluginOptions {
@@ -39,7 +38,8 @@ export default function babelPlugin(): PluginObj {
             `d.head.appendChild(e)`,
             `})`,
           ].join(';\n');
-          path.node.body.push(template.ast(`(function(){${stylesheet}})()`) as Statement);
+          const statement = template.ast(`(function(){${stylesheet}})()`);
+          path.node.body.push(Array.isArray(statement) ? statement[0] : statement);
         }
       },
     },
