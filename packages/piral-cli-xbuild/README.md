@@ -152,7 +152,7 @@ Environment variables:
 | `PILET_EXTERNALS`                  | The comma separated external packages.                            |
 | `PILET_IMPORTMAP`                  | The JSON string with the importmap.                               |
 | `PILET_SCHEMA`                     | The version of used schema, e.g., `v2`.                           |
-| `PILET_PIRAL_INSTANCE`             | The name of the used piral instance.                              |
+| `PILET_PIRAL_INSTANCES`            | The JSON string with the used piral instances.                    |
 
 ### `pilet debug`
 
@@ -200,7 +200,7 @@ Environment variables:
 | `PILET_EXTERNALS`                  | The comma separated external packages.                            |
 | `PILET_IMPORTMAP`                  | The JSON string with the importmap.                               |
 | `PILET_SCHEMA`                     | The version of used schema, e.g., `v2`.                           |
-| `PILET_PIRAL_INSTANCE`             | The name of the used piral instance.                              |
+| `PILET_PIRAL_INSTANCES`            | The JSON string with the used piral instances.                    |
 
 ## License
 

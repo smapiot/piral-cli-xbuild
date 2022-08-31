@@ -74,7 +74,7 @@ const handler: PiletBuildHandler = {
       minify,
       outDir,
       outFile,
-      piral,
+      piralInstances,
       sourceMaps,
       targetDir,
       version,
@@ -97,7 +97,7 @@ const handler: PiletBuildHandler = {
     process.env.PILET_EXTERNALS = externals.join(',');
     process.env.PILET_IMPORTMAP = JSON.stringify(importmap);
     process.env.PILET_SCHEMA = version;
-    process.env.PILET_PIRAL_INSTANCE = piral;
+    process.env.PILET_PIRAL_INSTANCES = JSON.stringify(piralInstances);
 
     return {
       async bundle() {
