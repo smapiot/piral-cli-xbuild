@@ -17,7 +17,7 @@
   "main": "lib/index.js",
   "typings": "lib/index.d.ts",
   "engines": {
-    "node": ">=10.0"
+    "node": ">=16.0"
   },
   "files": [
     "lib",
@@ -35,14 +35,13 @@
     "url": "https://github.com/smapiot/piral-cli-xbuild/issues"
   },
   "scripts": {
-    "build": "tsc",
-    "test": "echo \"Error: run tests from root\" && exit 1"
+    "build": "tsc"
   },
   "devDependencies": {
-    "@types/node": "^13.9.0",
-    "@types/yargs": "^15.0.4",
-    "piral-cli": "next",
-    "typescript": "^4.0.2"
+    "@types/node": "^16",
+    "@types/yargs": "^17",
+    "piral-cli": "1.7.3",
+    "typescript": "^5"
   },
   "dependencies": {
     "@babel/cli": "^7.15.7",
