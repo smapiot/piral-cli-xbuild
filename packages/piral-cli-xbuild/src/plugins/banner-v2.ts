@@ -2,20 +2,17 @@ import type { SharedDependency } from 'piral-cli';
 import type { PluginObj } from '@babel/core';
 import template from '@babel/template';
 
-export interface PluginOptions {
-  name: string;
-  importmap: Array<SharedDependency>;
-  requireRef: string;
-  cssFiles: Array<string>;
-}
-
-export default function babelPlugin(): PluginObj {
+export default function babelPlugin(
+  name: string,
+  importmap: Array<SharedDependency>,
+  requireRef: string,
+  cssFiles: Array<string>,
+): PluginObj {
   const debug = process.env.NODE_ENV === 'development';
 
   return {
     visitor: {
-      Program(path, state) {
-        const { name, importmap, requireRef, cssFiles } = state.opts as PluginOptions;
+      Program(path) {
         const deps = importmap.reduce((obj, dep) => {
           obj[dep.id] = dep.ref;
           return obj;

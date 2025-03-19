@@ -1,18 +1,20 @@
 import type { SharedDependency } from 'piral-cli';
 import { transformFileAsync } from '@babel/core';
 import { resolve } from 'path';
-import { getFiles, readFileAsJson, writeText } from './helpers';
+import { getFiles, readFileAsJson, writeText } from '../helpers';
 
-export interface PiletTransformOptions {
-  name: string;
+import bannerPlugin from '../plugins/banner-v3';
+import importmapPlugin from '../plugins/importmap';
+
+export interface PiletV3TransformOptions {
   requireRef: string;
   importmap: Array<SharedDependency>;
   outDir: string;
   outFile: string;
 }
 
-export async function transformToV2(options: PiletTransformOptions) {
-  const { outDir, outFile, name, importmap, requireRef } = options;
+export async function transformToV3(options: PiletV3TransformOptions) {
+  const { outDir, outFile, importmap, requireRef } = options;
   const entryModule = resolve(outFile, outDir);
   const files = await getFiles(outDir);
 
@@ -24,25 +26,10 @@ export async function transformToV2(options: PiletTransformOptions) {
         const smpath = `${path}.map`;
         const sourceMaps = files.includes(smpath);
         const inputSourceMap = sourceMaps ? await readFileAsJson(smpath) : undefined;
-        const plugins: Array<any> = [
-          [
-            require.resolve('./plugins/importmap'),
-            {
-              importmap,
-            },
-          ],
-        ];
+        const plugins = [importmapPlugin(importmap)];
 
         if (isEntryModule) {
-          plugins.push([
-            require.resolve('./plugins/banner'),
-            {
-              name,
-              importmap,
-              requireRef,
-              cssFiles: [],
-            },
-          ]);
+          plugins.push(bannerPlugin(importmap, requireRef, []));
         }
 
         const { code, map } = await transformFileAsync(path, {

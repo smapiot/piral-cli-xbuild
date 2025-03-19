@@ -1,5 +1,4 @@
 import type { PiralBuildHandler } from 'piral-cli';
-import { runScript } from 'piral-cli/utils';
 import { getConfig } from '../helpers';
 
 interface ToolConfig {

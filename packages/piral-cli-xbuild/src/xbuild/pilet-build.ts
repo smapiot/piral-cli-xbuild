@@ -2,8 +2,16 @@ import type { BundleResult, PiletBuildHandler } from 'piral-cli';
 import { checkExists } from 'piral-cli/utils';
 import { resolve } from 'path';
 import { EventEmitter } from 'events';
-import { transformToV2 } from '../pilet-v2';
-import { copyAll, getConfig, copyFile, setSharedEnvironment, run, assertRequiredType, assertOptionalType } from '../helpers';
+import { transformToV2, transformToV3 } from '../formats';
+import {
+  copyAll,
+  getConfig,
+  copyFile,
+  setSharedEnvironment,
+  run,
+  assertRequiredType,
+  assertOptionalType,
+} from '../helpers';
 
 interface ToolConfig {
   command: string;
@@ -84,13 +92,25 @@ const handler: PiletBuildHandler = {
         await copyFile(outDir, mainFile, outFile);
 
         if (!config.skipTransform) {
-          await transformToV2({
-            importmap,
-            name,
-            outDir,
-            outFile,
-            requireRef,
-          });
+          switch (version) {
+            case 'v2':
+              await transformToV2({
+                importmap,
+                name,
+                outDir,
+                outFile,
+                requireRef,
+              });
+              break;
+            case 'v3':
+              await transformToV3({
+                importmap,
+                outDir,
+                outFile,
+                requireRef,
+              });
+              break;
+          }
         }
 
         const result = {

@@ -19,6 +19,10 @@ The `piral-cli` plugin for running script commands as bundler replacement.
 - [ ] Pilets (tested / working)
     - [ ] Building
     - [ ] Debugging
+    - [ ] v0 format (not implemented)
+    - [ ] v1 format (not implemented)
+    - [x] v2 format
+    - [x] v3 format
 - [ ] Piral instances (tested / working)
     - [ ] Emulator build
     - [ ] Release build
