@@ -1,5 +1,9 @@
 # Changelog
 
+## 1.1.0 (tbd)
+
+- Added provenance at publish
+
 ## 1.0.0 (March 19, 2025)
 
 - Added support for pilet format v3
