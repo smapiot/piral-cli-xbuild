@@ -1,6 +1,6 @@
 # Changelog
 
-## 1.1.1 (tbd)
+## 1.1.1 (July 16, 2026)
 
 - Fixed issue with path comparison
 
