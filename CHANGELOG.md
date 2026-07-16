@@ -1,5 +1,9 @@
 # Changelog
 
+## 1.1.1 (tbd)
+
+- Fixed issue with path comparison
+
 ## 1.1.0 (March 18, 2026)
 
 - Added provenance at publish

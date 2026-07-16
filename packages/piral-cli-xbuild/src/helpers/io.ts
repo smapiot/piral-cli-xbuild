@@ -18,9 +18,10 @@ export function moveFile(dir: string, sourceFile: string, targetFile: string) {
 }
 
 export function copyFile(dir: string, sourceFile: string, targetFile: string) {
-  if (sourceFile !== targetFile) {
-    const source = resolve(dir, sourceFile);
-    const target = resolve(dir, targetFile);
+  const source = resolve(dir, sourceFile);
+  const target = resolve(dir, targetFile);
+
+  if (source !== target) {
     return fsPromises.copyFile(source, target);
   }
 
